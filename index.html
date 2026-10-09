@@ -6,201 +6,229 @@
 <title>Plugga – öva och prova med AI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --paper: #EEF2F7;
-    --sheet: #FFFFFF;
-    --ink: #1B2A4A;
-    --muted: #55627D;
-    --line: #CBD5E4;
-    --marker: #FFE066;
-    --red: #D1304A;
-    --blue: #2F5BEA;
-    --ok: #1E7A4C;
-    --ui: "Bricolage Grotesque", system-ui, -apple-system, "Segoe UI", sans-serif;
-    --read: "Literata", Georgia, "Times New Roman", serif;
+    --bg: #F6F8F9;
+    --card: #FFFFFF;
+    --ink: #14201C;
+    --muted: #5F6F6A;
+    --border: #DCE3E0;
+    --field: #F8FAFA;
+    --green: #1F6B57;
+    --green-soft: #E5F0EC;
+    --green-off: #A9C4BB;
+    --amber: #B7791F;
+    --red: #B83245;
+    --font: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
+  :root { --green-dark: #174F40; }
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    margin: 0; background: var(--paper); color: var(--ink);
-    font-family: var(--ui); font-size: 17px; line-height: 1.5;
-  }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 16px; line-height: 1.5; }
   [hidden] { display: none !important; }
-  :focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+  :focus-visible { outline: 3px solid rgba(31,107,87,.45); outline-offset: 2px; }
 
-  .top {
-    display: flex; justify-content: space-between; align-items: center;
-    max-width: 880px; margin: 0 auto; padding: 18px 20px;
-  }
-  .brand {
-    font-weight: 800; font-size: 26px; letter-spacing: -0.02em; color: var(--ink);
-    text-decoration: none; background: linear-gradient(transparent 58%, var(--marker) 58% 92%, transparent 92%);
-    padding: 0 4px;
-  }
-  main { max-width: 880px; margin: 0 auto; padding: 0 20px 80px; }
+  .top { max-width: 800px; margin: 0 auto; padding: 20px 20px 8px; display: flex; justify-content: space-between; align-items: center; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; color: var(--ink); text-decoration: none; }
+  .logo { width: 34px; height: 34px; border-radius: 10px; background: var(--green); color: #fff; display: grid; place-items: center; }
+  main { max-width: 800px; margin: 0 auto; padding: 12px 20px 90px; }
 
-  h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.1; letter-spacing: -0.025em; margin: 12px 0 10px; font-weight: 800; }
-  h2 { font-size: 24px; letter-spacing: -0.015em; margin: 0 0 8px; }
-  h3 { font-size: 18px; margin: 0 0 6px; }
-  .lede { color: var(--muted); max-width: 56ch; margin: 0 0 28px; font-size: 18px; }
-
-  label, .label { display: block; font-weight: 600; margin-bottom: 6px; }
-  .hint { font-weight: 400; color: var(--muted); font-size: 15px; }
-  input[type=text], input[type=number], input[type=password], textarea {
-    width: 100%; font: inherit; color: inherit; background: var(--sheet);
-    border: 1.5px solid var(--line); border-radius: 8px; padding: 11px 13px;
+  .card {
+    background: var(--card); border-radius: 22px; padding: clamp(22px, 5vw, 48px);
+    box-shadow: 0 1px 2px rgba(20,32,28,.04), 0 12px 40px rgba(20,32,28,.06);
   }
-  input:focus, textarea:focus { border-color: var(--blue); }
-  .row { display: grid; grid-template-columns: 1fr 1fr 150px; gap: 16px; margin-bottom: 22px; }
-  @media (max-width: 640px) { .row { grid-template-columns: 1fr; } }
+  .cardTitle { display: flex; align-items: center; gap: 12px; font-size: 26px; line-height: 1.2; font-weight: 700; margin: 0 0 28px; letter-spacing: -0.01em; }
+  .cardTitle svg { color: var(--green); flex: none; }
+  h2 { font-size: 22px; margin: 0 0 6px; letter-spacing: -0.01em; }
 
-  /* Linjerat skrivhäfte för materialet */
-  #material {
-    font-family: var(--read); font-size: 16px; line-height: 28px; min-height: 340px; resize: vertical;
-    padding: 6px 14px 6px 54px; border-radius: 8px;
-    background-color: #fff;
-    background-image:
-      linear-gradient(to right, transparent 39px, #F2B3BC 39px 40px, transparent 40px),
-      repeating-linear-gradient(transparent 0 27px, #DCE4F0 27px 28px);
-    background-attachment: local;
+  .field { margin-bottom: 20px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; gap: 0; } }
+  label, .lbl { display: block; font-size: 15px; font-weight: 500; margin-bottom: 8px; }
+  input[type=text], input[type=number], input[type=password], select, textarea {
+    width: 100%; font: inherit; color: var(--ink); background: var(--field);
+    border: 1px solid var(--border); border-radius: 12px; padding: 12px 15px; height: 48px;
   }
-  .counter { display: flex; justify-content: space-between; gap: 12px; margin: 8px 0 24px; font-size: 15px; color: var(--muted); }
+  input::placeholder, textarea::placeholder { color: #7B8A85; }
+  textarea { height: auto; resize: vertical; line-height: 1.55; }
+  select { appearance: none; cursor: pointer; padding-right: 40px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235F6F6A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center; }
+  select:disabled { background-color: #F0F3F2; color: #7B8A85; cursor: not-allowed; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(31,107,87,.18); }
+  #material { min-height: 240px; }
+  .counter { display: flex; justify-content: flex-end; gap: 12px; margin: 8px 0 26px; font-size: 14px; color: var(--muted); }
   .counter.over { color: var(--red); font-weight: 600; }
 
   .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  .actions.two > button { flex: 1 1 220px; }
   button {
-    font: inherit; font-weight: 600; cursor: pointer; border-radius: 8px;
-    padding: 12px 22px; border: 2px solid var(--ink); background: transparent; color: var(--ink);
+    font: inherit; font-weight: 600; cursor: pointer; border-radius: 12px; padding: 0 22px; height: 52px;
+    border: 1.5px solid var(--green); background: transparent; color: var(--green); font-size: 17px;
+    transition: background .15s, color .15s;
   }
-  button.primary { background: var(--ink); color: #fff; }
-  button:hover:not(:disabled) { background: var(--marker); color: var(--ink); }
-  button:disabled { opacity: .45; cursor: not-allowed; }
-  button.ghost { border-color: transparent; padding: 8px 12px; color: var(--muted); }
-  button.ghost:hover { background: var(--marker); }
+  button.primary { background: var(--green); color: #fff; }
+  button.primary:hover:not(:disabled) { background: var(--green-dark); }
+  button:not(.primary):not(.ghost):hover:not(:disabled) { background: var(--green-soft); }
+  button:disabled { cursor: not-allowed; background: var(--green-off); border-color: var(--green-off); color: #fff; }
+  button.secondary:disabled { background: transparent; color: var(--green-off); }
+  button.ghost { border-color: transparent; height: 40px; padding: 0 12px; font-size: 15px; color: var(--muted); font-weight: 500; }
+  button.ghost:hover { background: #E9EEEC; }
+  button.small { height: 40px; font-size: 15px; padding: 0 16px; }
 
-  /* Plugga-läge */
-  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
-  .bar p { margin: 0; color: var(--muted); }
-  #chatLog { display: flex; flex-direction: column; gap: 14px; padding-bottom: 12px; }
-  .msg { max-width: 92%; padding: 12px 16px; border-radius: 10px; font-family: var(--read); font-size: 16.5px; line-height: 1.6; }
+  /* Plugga */
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .bar h2 { margin: 0; }
+  .bar p { margin: 0; color: var(--muted); font-size: 15px; }
+  #chatLog { display: flex; flex-direction: column; gap: 14px; padding-bottom: 14px; }
+  .msg { max-width: 92%; padding: 13px 17px; border-radius: 16px; line-height: 1.6; }
   .msg p { margin: 0 0 10px; } .msg p:last-child { margin-bottom: 0; }
   .msg ul { margin: 0 0 10px; padding-left: 22px; }
-  .msg code { background: #E4EAF5; padding: 1px 5px; border-radius: 4px; font-size: .92em; }
-  .msg.ai { background: var(--sheet); border: 1px solid var(--line); border-left: 4px solid var(--marker); }
-  .msg.user { background: var(--ink); color: #fff; margin-left: auto; }
-  .msg.err { background: #FFF0F2; border: 1px solid var(--red); color: #7C1226; }
+  .msg code { background: #E8EEEC; padding: 1px 5px; border-radius: 4px; font-size: .92em; }
+  .msg.ai { background: var(--green-soft); border-top-left-radius: 4px; }
+  .msg.user { background: var(--green); color: #fff; margin-left: auto; border-top-right-radius: 4px; }
+  .msg.err { background: #FDECEF; color: #7C1226; border: 1px solid #F1B5C0; }
   .msg.typing { color: var(--muted); font-style: italic; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 12px; }
-  .chips button { padding: 6px 14px; font-size: 15px; border-width: 1.5px; border-radius: 99px; }
-  .chatForm { position: sticky; bottom: 0; background: var(--paper); padding: 10px 0 14px; display: flex; gap: 10px; align-items: flex-end; }
-  .chatForm textarea { min-height: 50px; max-height: 180px; resize: vertical; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; }
+  .chips button { height: 36px; padding: 0 15px; font-size: 14.5px; border-radius: 99px; font-weight: 500; border-color: var(--border); color: var(--ink); background: #fff; }
+  .chips button:hover:not(:disabled) { border-color: var(--green); }
+  .chatForm { display: flex; gap: 10px; align-items: flex-end; border-top: 1px solid var(--border); padding-top: 16px; }
+  .chatForm textarea { min-height: 52px; max-height: 180px; height: 52px; }
 
-  /* Provet */
-  .sheet {
-    background: var(--sheet); border: 1.5px solid var(--line); border-radius: 4px;
-    padding: clamp(18px, 4vw, 44px); font-family: var(--read);
-  }
-  .sheet header { border-bottom: 2px solid var(--ink); padding-bottom: 18px; margin-bottom: 8px; }
-  .sheet header h2 { font-family: var(--ui); font-size: 30px; font-weight: 800; }
-  .meta { color: var(--muted); margin: 0 0 14px; font-size: 15.5px; }
-  table.limits { border-collapse: collapse; font-family: var(--ui); font-size: 14.5px; }
-  table.limits th, table.limits td { border: 1px solid var(--line); padding: 4px 12px; text-align: center; }
+  /* Prov */
+  .exam header { padding-bottom: 20px; margin-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .exam header h2 { font-size: 28px; }
+  .meta { color: var(--muted); margin: 0 0 16px; font-size: 15px; max-width: 62ch; }
+  table.limits { border-collapse: separate; border-spacing: 0; font-size: 14px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  table.limits th, table.limits td { padding: 6px 16px; text-align: center; }
+  table.limits th { background: var(--green-soft); font-weight: 600; }
   table.limits th:first-child, table.limits td:first-child { text-align: left; font-weight: 600; }
-  .q { padding: 22px 0; border-bottom: 1px solid var(--line); }
-  .q:last-of-type { border-bottom: 0; }
-  .qhead { display: flex; justify-content: space-between; font-family: var(--ui); font-weight: 800; margin-bottom: 6px; }
-  .qhead .pts { font-weight: 600; color: var(--muted); }
-  .qtext { margin: 0 0 12px; white-space: pre-wrap; font-size: 17.5px; }
-  fieldset { border: 0; margin: 0; padding: 0; }
-  .opt { display: flex; gap: 10px; align-items: flex-start; padding: 7px 10px; border-radius: 6px; cursor: pointer; font-weight: 400; margin: 0; }
-  .opt:hover { background: #F4F7FC; }
-  .opt input { margin-top: 7px; accent-color: var(--ink); }
-  .q textarea { font-family: var(--read); font-size: 16.5px; }
+  .q { padding: 26px 0; border-bottom: 1px solid var(--border); }
+  .q:last-child { border-bottom: 0; }
+  .qhead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .qnum { font-weight: 700; color: var(--green); }
+  .pts { font-size: 13.5px; font-weight: 600; color: var(--green); background: var(--green-soft); border-radius: 99px; padding: 2px 11px; }
+  .qtext { margin: 0 0 14px; white-space: pre-wrap; font-size: 17.5px; font-weight: 500; }
+  fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; }
+  legend { font-size: 14px; color: var(--muted); margin-bottom: 8px; padding: 0; }
+  .opt { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px; cursor: pointer; font-weight: 400; margin: 0; background: var(--field); }
+  .opt:hover { border-color: var(--green); }
+  .opt:has(input:checked) { border-color: var(--green); background: var(--green-soft); }
+  .opt input { margin-top: 4px; accent-color: var(--green); width: 17px; height: 17px; flex: none; }
+  .q textarea { min-height: 110px; }
   .submitBar {
-    position: sticky; bottom: 0; background: var(--paper); border-top: 1.5px solid var(--line);
-    margin: 28px -20px -80px; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+    position: sticky; bottom: 14px; margin-top: 18px; background: #fff; border-radius: 16px; padding: 12px 14px 12px 20px;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+    box-shadow: 0 6px 30px rgba(20,32,28,.14); border: 1px solid var(--border);
   }
-  .submitBar .stat { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .submitBar .stat { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 15px; }
+  .submitBar .stat.warn { color: var(--red); font-weight: 700; }
+  .submitBar button { height: 46px; }
 
   /* Resultat */
-  .gradeBox { display: flex; gap: 36px; align-items: center; flex-wrap: wrap; margin: 8px 0 28px; }
-  .stamp {
-    width: 168px; height: 168px; border: 6px solid var(--red); border-radius: 50%;
-    display: grid; place-items: center; color: var(--red); transform: rotate(-5deg);
-    font-weight: 800; font-size: 104px; line-height: 1; flex: none;
-    box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 5px var(--red);
-  }
-  .score { font-size: 22px; font-weight: 600; margin: 0 0 6px; }
-  .panel { background: var(--sheet); border: 1.5px solid var(--line); border-radius: 8px; padding: 20px 24px; margin-bottom: 20px; }
-  .weak { list-style: none; padding: 0; margin: 0; }
-  .weak li { padding: 10px 0 10px 16px; border-left: 4px solid var(--marker); margin-bottom: 8px; }
+  .gradeBox { display: flex; gap: 28px; align-items: center; flex-wrap: wrap; margin: 0 0 30px; }
+  .badge { width: 132px; height: 132px; border-radius: 32px; display: grid; place-items: center; font-weight: 700; font-size: 80px; line-height: 1; color: #fff; flex: none; background: var(--green); }
+  .badge.gm { background: var(--amber); } .badge.gl { background: var(--red); }
+  .score { font-size: 22px; font-weight: 700; margin: 0 0 6px; }
+  .panel { background: var(--field); border: 1px solid var(--border); border-radius: 16px; padding: 22px 24px; margin-bottom: 24px; }
+  .weak { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 10px; }
+  .weak li { background: #fff; border: 1px solid var(--border); border-left: 4px solid var(--green); border-radius: 10px; padding: 12px 16px; }
   .weak strong { display: block; }
-  details { margin-top: 12px; }
-  summary { cursor: pointer; font-weight: 600; padding: 8px 0; }
-  .review { border-top: 1px solid var(--line); padding: 14px 0; font-family: var(--read); }
-  .review .got { font-family: var(--ui); font-weight: 600; }
-  .review .full { color: var(--ok); } .review .none { color: var(--red); }
-  .review .answer, .review .model { white-space: pre-wrap; margin: 4px 0; }
+  details { margin-top: 22px; }
+  summary { cursor: pointer; font-weight: 600; padding: 8px 0; color: var(--green); }
+  .review { border-top: 1px solid var(--border); padding: 16px 0; }
+  .review .got { font-weight: 700; }
+  .review .full { color: var(--green); } .review .none { color: var(--red); }
+  .review p { margin: 4px 0; white-space: pre-wrap; }
   .review .model { color: var(--muted); }
 
-  /* Laddning, dialog, felmeddelande */
-  #loading { position: fixed; inset: 0; background: rgba(238,242,247,.94); display: grid; place-items: center; z-index: 20; text-align: center; padding: 24px; }
-  #loading p { font-size: 20px; font-weight: 600; margin: 18px 0; }
-  .spin { width: 46px; height: 46px; border: 5px solid var(--line); border-top-color: var(--ink); border-radius: 50%; animation: spin 0.9s linear infinite; margin: 0 auto; }
+  #loading { position: fixed; inset: 0; background: rgba(246,248,249,.95); display: grid; place-items: center; z-index: 20; text-align: center; padding: 24px; }
+  #loading p { font-size: 19px; font-weight: 600; margin: 18px 0; }
+  .spin { width: 44px; height: 44px; border: 5px solid var(--green-soft); border-top-color: var(--green); border-radius: 50%; animation: spin .9s linear infinite; margin: 0 auto; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  @media (prefers-reduced-motion: reduce) { .spin { animation-duration: 3s; } html { scroll-behavior: auto; } }
-  #toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #7C1226; color: #fff; padding: 14px 20px; border-radius: 8px; max-width: min(560px, 92vw); z-index: 30; }
-  dialog { border: 2px solid var(--ink); border-radius: 10px; padding: 24px; max-width: 480px; width: 92vw; font-family: var(--ui); color: var(--ink); }
-  dialog::backdrop { background: rgba(27,42,74,.45); }
-  dialog p { margin: 0 0 14px; color: var(--muted); font-size: 15.5px; }
+  @media (prefers-reduced-motion: reduce) { .spin { animation-duration: 3s; } }
+  #toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #7C1226; color: #fff; padding: 14px 20px; border-radius: 12px; max-width: min(560px, 92vw); z-index: 30; box-shadow: 0 8px 30px rgba(0,0,0,.25); }
+  dialog { border: 0; border-radius: 20px; padding: 28px; max-width: 500px; width: 92vw; font-family: var(--font); color: var(--ink); box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+  dialog::backdrop { background: rgba(20,32,28,.5); }
+  dialog p { margin: 0 0 14px; color: var(--muted); font-size: 15px; }
+  dialog a { color: var(--green); font-weight: 600; }
 </style>
 </head>
 <body>
 
 <div class="top">
-  <a href="#" class="brand" id="homeLink">Plugga</a>
+  <a href="#" class="brand" id="homeLink">
+    <span class="logo" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2z"/><path d="M9 8h6M9 12h6"/></svg></span>
+    Plugga
+  </a>
   <button class="ghost" id="keyBtn" type="button">API-nyckel</button>
 </div>
 
 <main>
 
   <!-- STARTSIDA -->
-  <section id="view-home">
-    <h1>Vad ska du plugga på?</h1>
-    <p class="lede">Klistra in allt du har om ämnet. Sedan kan AI:n förhöra dig eller ge dig ett prov som liknar det riktiga.</p>
+  <section id="view-home" class="card">
+    <h1 class="cardTitle">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6M9 9h2"/></svg>
+      Klistra in ditt material
+    </h1>
 
-    <div class="row">
-      <div>
-        <label for="subject">Ämne</label>
-        <input type="text" id="subject" placeholder="t.ex. Biologi" autocomplete="off">
+    <div class="field">
+      <label for="subject">Ämne</label>
+      <input type="text" id="subject" placeholder="t.ex. Biologi" autocomplete="off">
+    </div>
+
+    <div class="grid2">
+      <div class="field">
+        <label for="level">Skolnivå</label>
+        <select id="level">
+          <option value="">Välj skolnivå</option>
+          <option value="grundskola">Grundskola</option>
+          <option value="gymnasiet">Gymnasiet</option>
+          <option value="universitet">Högskola/universitet</option>
+        </select>
       </div>
-      <div>
-        <label for="course">Kurs</label>
-        <input type="text" id="course" placeholder="t.ex. Biologi 1" autocomplete="off">
-      </div>
-      <div>
-        <label for="count">Antal frågor</label>
-        <input type="number" id="count" min="3" max="40" value="10">
+      <div class="field">
+        <label for="grade">Årskurs</label>
+        <select id="grade" disabled><option value="">Välj skolnivå först</option></select>
       </div>
     </div>
 
-    <label for="material">Ditt material <span class="hint">– instuderingsfrågor, begrepp, anteckningar, allt du har (max 20 000 ord)</span></label>
-    <textarea id="material" spellcheck="false" placeholder="Klistra in här …"></textarea>
-    <div class="counter" id="counter"><span id="wordCount">0 / 20 000 ord</span><span id="counterMsg"></span></div>
+    <div class="grid2">
+      <div class="field">
+        <label for="timer">Timer i minuter (valfri)</label>
+        <input type="number" id="timer" min="1" max="240" placeholder="t.ex. 60" inputmode="numeric">
+      </div>
+      <div class="field">
+        <label for="count">Antal frågor</label>
+        <select id="count">
+          <option value="5">5 frågor</option>
+          <option value="10" selected>10 frågor</option>
+          <option value="15">15 frågor</option>
+          <option value="20">20 frågor</option>
+          <option value="30">30 frågor</option>
+          <option value="40">40 frågor</option>
+        </select>
+      </div>
+    </div>
 
-    <div class="actions">
+    <div class="field" style="margin-bottom:0">
+      <label for="material">Material <span style="font-weight:400;color:var(--muted)">(minst 30 ord – instuderingsfrågor, begrepp, anteckningar)</span></label>
+      <textarea id="material" spellcheck="false" placeholder="Klistra in dina anteckningar, sammanfattning eller instuderingsfrågor här…"></textarea>
+    </div>
+    <div class="counter" id="counter"><span id="counterMsg"></span><span id="wordCount">0 / 20 000 ord</span></div>
+
+    <div class="actions two">
       <button type="button" class="primary" id="studyBtn">Börja Plugga</button>
-      <button type="button" id="examBtn">Starta Prov</button>
+      <button type="button" class="secondary" id="examBtn">Starta Prov</button>
     </div>
   </section>
 
   <!-- PLUGGA -->
-  <section id="view-study" hidden>
+  <section id="view-study" class="card" hidden>
     <div class="bar">
-      <p id="studyTitle"></p>
-      <button type="button" id="studyExit">Avsluta</button>
+      <div><h2>Plugga</h2><p id="studyTitle"></p></div>
+      <button type="button" class="small" id="studyExit">Avsluta</button>
     </div>
     <div id="chatLog" aria-live="polite"></div>
     <div class="chips" id="chips">
@@ -217,21 +245,21 @@
 
   <!-- PROV -->
   <section id="view-exam" hidden>
-    <div class="sheet" id="examSheet"></div>
+    <div class="card exam" id="examSheet"></div>
     <div class="submitBar">
-      <span class="stat"><span id="progress"></span> &nbsp;|&nbsp; Tid <span id="timer">00:00</span></span>
+      <span class="stat" id="stat"><span id="progress"></span> &nbsp;|&nbsp; <span id="timerLabel">Tid</span> <span id="timerVal">00:00</span></span>
       <button type="button" class="primary" id="submitExam">Lämna in provet</button>
     </div>
   </section>
 
   <!-- RESULTAT -->
-  <section id="view-result" hidden>
-    <h1>Så gick det</h1>
+  <section id="view-result" class="card" hidden>
+    <h1 class="cardTitle" style="margin-bottom:22px">Så gick det</h1>
     <div class="gradeBox">
-      <div class="stamp" id="gradeStamp" aria-label="Betyg"></div>
+      <div class="badge" id="gradeBadge" aria-label="Betyg"></div>
       <div>
         <p class="score" id="scoreLine"></p>
-        <p id="summary" style="max-width:52ch;margin:0"></p>
+        <p id="summary" style="max-width:50ch;margin:0"></p>
       </div>
     </div>
 
@@ -240,12 +268,12 @@
       <ul class="weak" id="weakList"></ul>
     </div>
 
-    <div class="actions" style="margin-bottom:18px">
+    <div class="actions two">
       <button type="button" class="primary" id="retryBtn">Gör om provet</button>
       <button type="button" id="studyFromResultBtn">Plugga</button>
       <button type="button" id="homeFromResultBtn">Till startsidan</button>
     </div>
-    <p class="hint" style="margin-top:0">Gör om provet ger nya frågor på samma material.</p>
+    <p style="color:var(--muted);font-size:14px;margin:12px 0 0">Gör om provet ger nya frågor på samma material.</p>
 
     <details>
       <summary>Gå igenom dina svar</summary>
@@ -259,7 +287,7 @@
   <div>
     <div class="spin"></div>
     <p id="loadingText">Jobbar …</p>
-    <button type="button" id="cancelBtn">Avbryt</button>
+    <button type="button" id="cancelBtn" class="small">Avbryt</button>
   </div>
 </div>
 
@@ -269,9 +297,9 @@
   <h2>Din gratis API-nyckel</h2>
   <p>AI:n drivs av Google Gemini, som har en gratisnivå. Skaffa en nyckel gratis på <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">aistudio.google.com/app/apikey</a> (logga in med Google, välj &quot;Create API key&quot;). Ingen betalning behövs. Nyckeln sparas bara i din webbläsare och skickas bara till Google. Obs: på gratisnivån kan Google använda det du skickar för att förbättra sina produkter, så lägg inte in personuppgifter.</p>
   <input type="password" id="keyInput" placeholder="AIza…" autocomplete="off" aria-label="API-nyckel">
-  <div class="actions" style="margin-top:16px">
-    <button type="button" class="primary" id="keySave">Spara</button>
-    <button type="button" id="keyRemove">Ta bort</button>
+  <div class="actions" style="margin-top:18px">
+    <button type="button" class="primary small" id="keySave">Spara</button>
+    <button type="button" class="small" id="keyRemove">Ta bort</button>
     <button type="button" class="ghost" id="keyClose">Stäng</button>
   </div>
 </dialog>
@@ -281,12 +309,19 @@
   'use strict';
 
   /* ---------- Inställningar ---------- */
-  const MODEL = 'gemini-2.5-flash';           // gratis. Om du når gränsen: prova 'gemini-2.5-flash-lite'
+  const MODELS = ['gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-2.5-flash-lite']; // gratis. Om en modell försvunnit används nästa i listan
+  let modelIdx = 0;
   const MAX_WORDS = 20000;
+  const MIN_WORDS = 30;
   const LIMITS = [['A', 90], ['B', 80], ['C', 70], ['D', 60], ['E', 50]]; // % av max poäng
+  const LEVELS = {
+    grundskola:  { label: 'Grundskola', grades: ['Årskurs 4', 'Årskurs 5', 'Årskurs 6', 'Årskurs 7', 'Årskurs 8', 'Årskurs 9'] },
+    gymnasiet:   { label: 'Gymnasiet', grades: ['Årskurs 1', 'Årskurs 2', 'Årskurs 3'] },
+    universitet: { label: 'Högskola/universitet', grades: ['Grundnivå', 'Avancerad nivå'] }
+  };
 
   const $ = (s) => document.querySelector(s);
-  const state = { s: null, exam: null, answers: {}, chat: [], weak: '', abort: null, timer: null, t0: 0, grading: false };
+  const state = { s: null, exam: null, answers: {}, chat: [], weak: '', abort: null, timer: null, t0: 0, limit: 0, grading: false };
 
   /* ---------- Hjälpfunktioner ---------- */
   function el(tag, props = {}, ...kids) {
@@ -318,6 +353,7 @@
   }
   function loading(text) { $('#loadingText').textContent = text; $('#loading').hidden = false; }
   function done() { $('#loading').hidden = true; }
+  const mmss = (sec) => String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0');
 
   // Enkel och säker markdown: **fet**, `kod`, listor, stycken
   function md(text) {
@@ -334,7 +370,7 @@
     return html;
   }
 
-  /* ---------- API ---------- */
+  /* ---------- API (Google Gemini, gratis nivå) ---------- */
   async function callClaude({ system, messages, maxTokens, json }) {
     const key = store.get('plugga.gkey');
     if (!key) { openKeyDialog(); throw new Error('Lägg först in din gratis API-nyckel.'); }
@@ -347,7 +383,7 @@
     if (json) body.generationConfig.responseMimeType = 'application/json';
     let res;
     try {
-      res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + MODEL + ':generateContent', {
+      res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + MODELS[modelIdx] + ':generateContent', {
         method: 'POST',
         signal: state.abort.signal,
         headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
@@ -356,6 +392,10 @@
     } catch (e) {
       if (e.name === 'AbortError') throw e;
       throw new Error('Kunde inte nå AI:n. Kontrollera din internetanslutning.');
+    }
+    if (!res.ok && res.status === 404 && modelIdx < MODELS.length - 1) {
+      modelIdx++;                               // modellen finns inte längre: prova nästa
+      return callClaude({ system, messages, maxTokens, json });
     }
     if (!res.ok) {
       let detail = '';
@@ -382,30 +422,44 @@
   }
 
   /* ---------- Startsida ---------- */
+  function fillGrades(selected) {
+    const lv = LEVELS[$('#level').value];
+    const g = $('#grade');
+    g.replaceChildren();
+    if (!lv) { g.append(el('option', { value: '', text: 'Välj skolnivå först' })); g.disabled = true; return; }
+    g.disabled = false;
+    g.append(el('option', { value: '', text: 'Välj årskurs' }));
+    lv.grades.forEach((x) => g.append(el('option', { value: x, text: x })));
+    if (selected && lv.grades.includes(selected)) g.value = selected;
+  }
   function readSetup() {
+    const lv = LEVELS[$('#level').value];
+    const grade = $('#grade').value;
     return {
       subject: $('#subject').value.trim(),
-      course: $('#course').value.trim(),
+      level: $('#level').value,
+      grade,
+      course: lv && grade ? lv.label + ', ' + grade : '',
+      timer: Math.max(0, Math.min(240, parseInt($('#timer').value, 10) || 0)),
       count: Math.max(3, Math.min(40, parseInt($('#count').value, 10) || 10)),
       material: $('#material').value.trim()
     };
   }
   function saveSetup() { store.set('plugga.setup', JSON.stringify(readSetup())); }
-  function updateCounter() {
+  function refreshHome() {
+    const s = readSetup();
     const n = words($('#material').value);
     const over = n > MAX_WORDS;
     $('#wordCount').textContent = n.toLocaleString('sv-SE') + ' / 20 000 ord';
-    $('#counterMsg').textContent = over ? 'Det är för mycket – korta ner med ' + (n - MAX_WORDS).toLocaleString('sv-SE') + ' ord.' : '';
+    $('#counterMsg').textContent = over ? 'För mycket – korta ner med ' + (n - MAX_WORDS).toLocaleString('sv-SE') + ' ord.' : '';
     $('#counter').classList.toggle('over', over);
-    $('#studyBtn').disabled = $('#examBtn').disabled = over;
+    const ok = !!(s.subject && s.course && n >= MIN_WORDS && !over);
+    $('#studyBtn').disabled = $('#examBtn').disabled = !ok;
   }
   function validSetup() {
     const s = readSetup();
-    if (!s.subject || !s.course) { toast('Fyll i både ämne och kurs.'); return null; }
-    if (words(s.material) < 30) { toast('Klistra in ditt material först (minst några meningar).'); return null; }
-    if (words(s.material) > MAX_WORDS) return null;
+    if (!s.subject || !s.course || words(s.material) < MIN_WORDS || words(s.material) > MAX_WORDS) return null;
     if (!store.get('plugga.gkey')) { openKeyDialog(); return null; }
-    $('#count').value = s.count;
     state.s = s;
     return s;
   }
@@ -413,7 +467,7 @@
   /* ---------- Plugga-läge ---------- */
   function studySystem(s) {
     return `Du är en tålmodig och engagerande studiecoach som hjälper en elev att plugga.
-Ämne: ${s.subject}. Kurs: ${s.course}.
+Ämne: ${s.subject}. Elevens nivå: ${s.course}. Anpassa språk och svårighetsgrad efter den nivån.
 
 Eleven har klistrat in sitt studiematerial nedan. Utgå i första hand från det. Om eleven frågar om något som inte finns i materialet får du ändå hjälpa till, men säg tydligt att det inte stod i materialet.
 
@@ -436,14 +490,14 @@ ${s.material}
     return m;
   }
 
-  async function sendChat(hiddenFirst) {
+  async function sendChat() {
     const typing = addMsg('ai typing', 'Skriver …');
     $('#chatInput').disabled = true;
     try {
       const reply = await callClaude({
         system: studySystem(state.s),
         messages: state.chat.map(({ role, content }) => ({ role, content })),
-        maxTokens: 4000
+        maxTokens: 8000
       });
       typing.remove();
       state.chat.push({ role: 'assistant', content: reply });
@@ -452,7 +506,6 @@ ${s.material}
       typing.remove();
       state.chat.pop();                       // ta bort meddelandet som inte gick fram
       if (e.name !== 'AbortError') addMsg('err', e.message);
-      if (hiddenFirst) { /* första meddelandet: låt användaren försöka igen via chipsen */ }
     } finally {
       $('#chatInput').disabled = false;
       $('#chatInput').focus({ preventScroll: true });
@@ -468,16 +521,17 @@ ${s.material}
       ? 'Jag gjorde ett prov och behöver träna mer på detta:\n' + focus + '\nHjälp mig med det. Börja med att förklara det viktigaste kort och ställ sedan en fråga till mig.'
       : 'Hej! Jag vill börja plugga. Hälsa kort och föreslå hur vi kan börja.';
     state.chat.push({ role: 'user', content: first });
-    sendChat(true);
+    sendChat();
   }
 
   /* ---------- Prov: skapa ---------- */
   function examPrompt(s) {
     const n = s.count;
-    return `Skapa ett skriftligt prov i ämnet "${s.subject}", kursen "${s.course}", med exakt ${n} frågor.
+    return `Skapa ett skriftligt prov i ämnet "${s.subject}" för elever på nivån "${s.course}", med exakt ${n} frågor.
 
 Regler:
 - Använd ENDAST innehållet i underlaget nedan. Täck så stor del av underlaget som möjligt.
+- Anpassa språk och svårighetsgrad till nivån ${s.course}.
 - Gör provet så likt ett riktigt skolprov som möjligt: en blandning av frågetyper och stigande svårighetsgrad (från grundläggande kunskap till resonemang och tillämpning).
 - Fördelning ungefär: 40 % "flerval" (4 alternativ, exakt ett rätt, rimliga felalternativ), 40 % "kort" (svar på 1–3 meningar, 2–3 poäng) och 20 % "lang" (utförligt resonerande svar, 4–6 poäng). Flerval ger 1 poäng.
 - Frågorna ska vara tydliga, entydiga och på svenska. Skriv aldrig svaret i frågan.
@@ -528,19 +582,34 @@ ${s.material}
       state.answers = {};
       renderExam();
       show('exam');
-      startTimer();
+      state.limit = s.timer * 60;
+      state.t0 = Date.now();
+      runTimer();
     } catch (e) {
       if (e.name !== 'AbortError') toast(e.message);
     } finally { done(); }
   }
 
   /* ---------- Prov: visa ---------- */
-  function startTimer() {
+  function runTimer() {
     clearInterval(state.timer);
-    state.t0 = Date.now();
     const tick = () => {
-      const sec = Math.floor((Date.now() - state.t0) / 1000);
-      $('#timer').textContent = String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0');
+      const used = Math.floor((Date.now() - state.t0) / 1000);
+      if (state.limit) {
+        const left = Math.max(0, state.limit - used);
+        $('#timerLabel').textContent = 'Tid kvar';
+        $('#timerVal').textContent = mmss(left);
+        $('#stat').classList.toggle('warn', left <= 60);
+        if (left === 0) {
+          clearInterval(state.timer);
+          toast('Tiden är slut. Provet lämnas in.');
+          submitExam(true);
+        }
+      } else {
+        $('#timerLabel').textContent = 'Tid';
+        $('#timerVal').textContent = mmss(used);
+        $('#stat').classList.remove('warn');
+      }
     };
     tick(); state.timer = setInterval(tick, 1000);
   }
@@ -555,23 +624,23 @@ ${s.material}
   function renderExam() {
     const { s, exam } = state;
     const box = $('#examSheet'); box.replaceChildren();
-    const limitRow = (label, fn) => el('tr', {}, el('td', { text: label }), ...LIMITS.slice().reverse().map(([g, t]) => el('td', { text: fn(g, t) })));
+    const asc = LIMITS.slice().reverse();
     box.append(el('header', {},
-      el('h2', { text: s.subject + ' – ' + s.course }),
-      el('p', { class: 'meta', text: 'Skriftligt prov. Antal frågor: ' + exam.questions.length + '. Max poäng: ' + exam.max + '. Hjälpmedel: inga. Svara med egna ord och motivera där det efterfrågas.' }),
+      el('h2', { text: s.subject }),
+      el('p', { class: 'meta', text: s.course + '. Skriftligt prov med ' + exam.questions.length + ' frågor och högst ' + exam.max + ' poäng' + (s.timer ? '. Tid: ' + s.timer + ' minuter' : '') + '. Hjälpmedel: inga. Svara med egna ord och motivera där det efterfrågas.' }),
       el('table', { class: 'limits' },
-        el('thead', {}, el('tr', {}, el('th', { text: 'Betyg' }), ...LIMITS.slice().reverse().map(([g]) => el('th', { text: g })))),
-        el('tbody', {}, limitRow('Poäng från', (g, t) => String(Math.ceil(exam.max * t / 100))))
+        el('thead', {}, el('tr', {}, el('th', { text: 'Betyg' }), ...asc.map(([g]) => el('th', { text: g })))),
+        el('tbody', {}, el('tr', {}, el('td', { text: 'Poäng från' }), ...asc.map(([, t]) => el('td', { text: String(Math.ceil(exam.max * t / 100)) }))))
       )
     ));
 
     exam.questions.forEach((q) => {
       const art = el('article', { class: 'q' },
-        el('div', { class: 'qhead' }, el('span', { text: q.id + '.' }), el('span', { class: 'pts', text: q.points + ' p' })),
+        el('div', { class: 'qhead' }, el('span', { class: 'qnum', text: 'Fråga ' + q.id }), el('span', { class: 'pts', text: q.points + (q.points === 1 ? ' poäng' : ' poäng') })),
         el('p', { class: 'qtext', text: q.question })
       );
       if (q.type === 'flerval') {
-        const fs = el('fieldset', {}, el('legend', { class: 'hint', text: 'Välj ett alternativ', style: 'margin-bottom:4px' }));
+        const fs = el('fieldset', {}, el('legend', { text: 'Välj ett alternativ' }));
         q.options.forEach((o, i) => {
           const input = el('input', { type: 'radio', name: 'q' + q.id, value: String(i) });
           input.addEventListener('change', () => { state.answers[q.id] = i; updateProgress(); });
@@ -591,11 +660,11 @@ ${s.material}
   /* ---------- Prov: rätta ---------- */
   const gradeFor = (pct) => { for (const [g, t] of LIMITS) if (pct >= t) return g; return 'F'; };
 
-  async function submitExam() {
+  async function submitExam(auto) {
     if (state.grading) return;
     const { exam } = state;
     const missing = exam.questions.length - answeredCount();
-    if (missing > 0 && !confirm('Du har ' + missing + ' obesvarade frågor. Lämna in ändå?')) return;
+    if (auto !== true && missing > 0 && !confirm('Du har ' + missing + ' obesvarade frågor. Lämna in ändå?')) return;
     state.grading = true;
     clearInterval(state.timer);
     loading('Rättar ditt prov …');
@@ -653,20 +722,16 @@ Svara ENBART med JSON:
       show('result');
     } catch (e) {
       if (e.name !== 'AbortError') toast(e.message);
-      if (state.exam) startTimerKeep();
+      state.limit = 0;                         // fortsätt klockan utan tidsgräns om rättningen misslyckades
+      runTimer();
     } finally { done(); state.grading = false; }
-  }
-  function startTimerKeep() { // fortsätt klockan om rättningen misslyckades
-    clearInterval(state.timer);
-    state.timer = setInterval(() => {
-      const sec = Math.floor((Date.now() - state.t0) / 1000);
-      $('#timer').textContent = String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0');
-    }, 1000);
   }
 
   /* ---------- Resultat ---------- */
   function renderResult(r) {
-    $('#gradeStamp').textContent = r.grade;
+    const badge = $('#gradeBadge');
+    badge.textContent = r.grade;
+    badge.className = 'badge' + (r.grade === 'F' ? ' gl' : (r.grade === 'D' || r.grade === 'E') ? ' gm' : '');
     $('#scoreLine').textContent = r.total + ' av ' + state.exam.max + ' poäng (' + r.pct + ' %)';
     $('#summary').textContent = r.summary;
 
@@ -680,13 +745,13 @@ Svara ENBART med JSON:
       const full = got === q.points;
       const yours = q.type === 'flerval' ? (Number.isInteger(answer) ? q.options[answer] : '(obesvarad)') : ((answer && answer.trim()) || '(obesvarad)');
       const div = el('div', { class: 'review' },
-        el('div', { class: 'got ' + (full ? 'full' : 'none'), text: q.id + '. ' + got + ' av ' + q.points + ' p' }),
-        el('p', { text: q.question, style: 'margin:4px 0;white-space:pre-wrap' }),
-        el('p', { class: 'answer', text: 'Ditt svar: ' + yours })
+        el('div', { class: 'got ' + (full ? 'full' : 'none'), text: 'Fråga ' + q.id + ': ' + got + ' av ' + q.points + ' p' }),
+        el('p', { text: q.question }),
+        el('p', { text: 'Ditt svar: ' + yours })
       );
       if (q.type === 'flerval' && !full) div.append(el('p', { class: 'model', text: 'Rätt svar: ' + q.options[q.correct] }));
       if (q.type !== 'flerval') {
-        if (comment) div.append(el('p', { text: comment, style: 'margin:4px 0' }));
+        if (comment) div.append(el('p', { text: comment }));
         if (q.model_answer) div.append(el('p', { class: 'model', text: 'Exempel på bra svar: ' + q.model_answer }));
       }
       list.append(div);
@@ -710,10 +775,10 @@ Svara ENBART med JSON:
   $('#studyFromResultBtn').addEventListener('click', () => startStudy(state.weak));
   $('#studyBtn').addEventListener('click', () => startStudy(''));
   $('#examBtn').addEventListener('click', startExam);
-  $('#submitExam').addEventListener('click', submitExam);
+  $('#submitExam').addEventListener('click', () => submitExam(false));
   $('#cancelBtn').addEventListener('click', () => { if (state.abort) state.abort.abort(); done(); state.grading = false; });
 
-  $('#keyBtn').addEventListener('click', () => { $('#keyInput').value = ''; $('#keyDialog').showModal(); });
+  $('#keyBtn').addEventListener('click', openKeyDialog);
   $('#keyClose').addEventListener('click', () => $('#keyDialog').close());
   $('#keyRemove').addEventListener('click', () => { store.del('plugga.gkey'); $('#keyDialog').close(); toast('API-nyckeln är borttagen.'); });
   $('#keySave').addEventListener('click', () => {
@@ -722,12 +787,15 @@ Svara ENBART med JSON:
     store.set('plugga.gkey', k); $('#keyDialog').close(); toast('API-nyckeln är sparad.');
   });
 
-  for (const id of ['subject', 'course', 'count', 'material']) $('#' + id).addEventListener('input', () => { updateCounter(); saveSetup(); });
+  $('#level').addEventListener('change', () => { fillGrades(); refreshHome(); saveSetup(); });
+  for (const id of ['subject', 'grade', 'timer', 'count', 'material']) {
+    $('#' + id).addEventListener('input', () => { refreshHome(); saveSetup(); });
+  }
 
   $('#chips').addEventListener('click', (e) => {
     const b = e.target.closest('button[data-say]'); if (!b || $('#chatInput').disabled) return;
     state.chat.push({ role: 'user', content: b.dataset.say });
-    addMsg('user', b.dataset.say); sendChat(false);
+    addMsg('user', b.dataset.say); sendChat();
   });
   $('#chatForm').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -735,7 +803,7 @@ Svara ENBART med JSON:
     if (!t || $('#chatInput').disabled) return;
     $('#chatInput').value = '';
     state.chat.push({ role: 'user', content: t });
-    addMsg('user', t); sendChat(false);
+    addMsg('user', t); sendChat();
   });
   $('#chatInput').addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('#chatForm').requestSubmit(); }
@@ -746,12 +814,13 @@ Svara ENBART med JSON:
     const saved = JSON.parse(store.get('plugga.setup') || 'null');
     if (saved) {
       $('#subject').value = saved.subject || '';
-      $('#course').value = saved.course || '';
-      $('#count').value = saved.count || 10;
+      if (saved.level && LEVELS[saved.level]) { $('#level').value = saved.level; fillGrades(saved.grade); }
+      if (saved.timer) $('#timer').value = saved.timer;
+      if (saved.count) $('#count').value = String(saved.count);
       $('#material').value = saved.material || '';
     }
   } catch { /* ignore */ }
-  updateCounter();
+  refreshHome();
 })();
 </script>
 </body>
