@@ -404,7 +404,13 @@
       link: 'https://console.groq.com/keys', linkText: 'console.groq.com/keys', hint: 'Skapa ett gratiskonto och välj "Create API Key".', ph: 'gsk_…' },
     { id: 'openrouter', name: 'OpenRouter',    store: 'plugga.key.openrouter', models: ['openai/gpt-oss-120b:free', 'meta-llama/llama-3.3-70b-instruct:free', 'google/gemma-3-27b-it:free'],
       url: 'https://openrouter.ai/api/v1/chat/completions', noJsonMode: true,
-      link: 'https://openrouter.ai/keys', linkText: 'openrouter.ai/keys', hint: 'Använder bara modeller som är gratis (slutar på :free).', ph: 'sk-or-…' }
+      link: 'https://openrouter.ai/keys', linkText: 'openrouter.ai/keys', hint: 'Använder bara modeller som är gratis (slutar på :free).', ph: 'sk-or-…' },
+    { id: 'cohere',     name: 'Cohere',        store: 'plugga.key.cohere',     models: ['command-a-03-2025', 'command-r-plus-08-2024', 'command-r-08-2024'],
+      url: 'https://api.cohere.ai/compatibility/v1/chat/completions', noJsonMode: true,
+      link: 'https://dashboard.cohere.com/api-keys', linkText: 'dashboard.cohere.com/api-keys', hint: 'Använd den gratis "Trial"-nyckeln.', ph: 'Din Cohere-nyckel' },
+    { id: 'sambanova',  name: 'SambaNova',     store: 'plugga.key.sambanova',  models: ['Meta-Llama-3.3-70B-Instruct', 'gpt-oss-120b', 'Meta-Llama-3.1-8B-Instruct'],
+      url: 'https://api.sambanova.ai/v1/chat/completions', noJsonMode: true,
+      link: 'https://cloud.sambanova.ai/apis', linkText: 'cloud.sambanova.ai/apis', hint: 'Skapa ett konto och en API-nyckel.', ph: 'Din SambaNova-nyckel' }
   ];
   const cool = {};   // tjänst-id -> tidpunkt då den får användas igen (efter att gratisgränsen nåtts)
   const hasKey = () => PROVIDERS.some((p) => store.get(p.store));
