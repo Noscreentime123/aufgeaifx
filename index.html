@@ -161,6 +161,10 @@
   dialog::backdrop { background: rgba(20,32,28,.5); }
   dialog p { margin: 0 0 14px; color: var(--muted); font-size: 15px; }
   dialog a { color: var(--green); font-weight: 600; }
+  dialog { max-height: 90vh; overflow-y: auto; }
+  .keyRow { margin-bottom: 14px; }
+  .keyRow label { margin-bottom: 4px; }
+  .keyRow .keyHint { display: block; font-size: 13.5px; color: var(--muted); margin-bottom: 6px; }
 </style>
 </head>
 <body>
@@ -330,12 +334,12 @@
 <div id="toast" role="alert" hidden></div>
 
 <dialog id="keyDialog">
-  <h2>Din gratis API-nyckel</h2>
-  <p>AI:n drivs av Google Gemini, som har en gratisnivå. Skaffa en nyckel gratis på <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">aistudio.google.com/app/apikey</a> (logga in med Google, välj &quot;Create API key&quot;). Ingen betalning behövs. Nyckeln sparas bara i din webbläsare och skickas bara till Google. Obs: på gratisnivån kan Google använda det du skickar för att förbättra sina produkter, så lägg inte in personuppgifter.</p>
-  <input type="password" id="keyInput" placeholder="AIza…" autocomplete="off" aria-label="API-nyckel">
+  <h2>Dina gratis API-nycklar</h2>
+  <p>AI:n drivs av flera gratistjänster. Du behöver bara en nyckel för att börja, men ju fler du lägger in desto längre kan du plugga: när en tjänst når sin gratisgräns byter sidan automatiskt till nästa. Alla nycklar skaffas gratis, ingen betalning behövs. Nycklarna sparas bara i din webbläsare och skickas bara till respektive tjänst. Obs: på gratisnivåer kan tjänsterna använda det du skickar för att förbättra sina produkter, så lägg inte in personuppgifter.</p>
+  <div id="keyRows"></div>
   <div class="actions" style="margin-top:18px">
     <button type="button" class="primary small" id="keySave">Spara</button>
-    <button type="button" class="small" id="keyRemove">Ta bort</button>
+    <button type="button" class="small" id="keyRemove">Ta bort alla</button>
     <button type="button" class="ghost" id="keyClose">Stäng</button>
   </div>
 </dialog>
@@ -357,6 +361,27 @@
     gymnasiet:   { label: 'Gymnasiet', grades: ['Årskurs 1', 'Årskurs 2', 'Årskurs 3'] },
     universitet: { label: 'Högskola/universitet', grades: ['Grundnivå', 'Avancerad nivå'] }
   };
+
+  // Gratis AI-tjänster, i den ordning de används. Tar en slut (eller är överbelastad) går sidan automatiskt vidare till nästa som har en nyckel.
+  // Modellnamn kan ändras av tjänsterna med tiden. Försvunna modeller hoppas över automatiskt, men lägg gärna till nya i listorna.
+  const PROVIDERS = [
+    { id: 'gemini',     name: 'Google Gemini', store: 'plugga.gkey',           models: MODELS,
+      link: 'https://aistudio.google.com/app/apikey', linkText: 'aistudio.google.com/app/apikey', hint: 'Logga in med Google, välj "Create API key".', ph: 'AIza…' },
+    { id: 'groq',       name: 'Groq',          store: 'plugga.key.groq',       models: ['llama-3.3-70b-versatile', 'openai/gpt-oss-120b', 'llama-3.1-8b-instant'],
+      url: 'https://api.groq.com/openai/v1/chat/completions',
+      link: 'https://console.groq.com/keys', linkText: 'console.groq.com/keys', hint: 'Skapa ett gratiskonto och välj "Create API Key".', ph: 'gsk_…' },
+    { id: 'openrouter', name: 'OpenRouter',    store: 'plugga.key.openrouter', models: ['openai/gpt-oss-120b:free', 'meta-llama/llama-3.3-70b-instruct:free', 'google/gemma-3-27b-it:free'],
+      url: 'https://openrouter.ai/api/v1/chat/completions', noJsonMode: true,
+      link: 'https://openrouter.ai/keys', linkText: 'openrouter.ai/keys', hint: 'Använder bara modeller som är gratis (slutar på :free).', ph: 'sk-or-…' },
+    { id: 'cerebras',   name: 'Cerebras',      store: 'plugga.key.cerebras',   models: ['gpt-oss-120b', 'llama3.1-8b'],
+      url: 'https://api.cerebras.ai/v1/chat/completions',
+      link: 'https://cloud.cerebras.ai/', linkText: 'cloud.cerebras.ai', hint: 'Skapa ett gratiskonto och en API-nyckel under "API Keys".', ph: 'csk-…' },
+    { id: 'mistral',    name: 'Mistral',       store: 'plugga.key.mistral',    models: ['mistral-small-latest', 'open-mistral-nemo'],
+      url: 'https://api.mistral.ai/v1/chat/completions',
+      link: 'https://console.mistral.ai/api-keys', linkText: 'console.mistral.ai/api-keys', hint: 'Välj gratisnivån "Experiment" (kan kräva telefonverifiering).', ph: 'Din Mistral-nyckel' }
+  ];
+  const cool = {};   // tjänst-id -> tidpunkt då den får användas igen (efter att gratisgränsen nåtts)
+  const hasKey = () => PROVIDERS.some((p) => store.get(p.store));
 
   const $ = (s) => document.querySelector(s);
   const state = { s: null, exam: null, answers: {}, chat: [], weak: '', abort: null, timer: null, t0: 0, limit: 0, grading: false, cur: 0, usedSec: 0 };
@@ -408,13 +433,13 @@
     return html;
   }
 
-  /* ---------- API (Google Gemini, gratis nivå) ---------- */
+  /* ---------- API (flera gratis AI-tjänster med automatiskt byte) ---------- */
   async function callClaude({ system, messages, maxTokens, json }) {
-    const key = store.get('plugga.gkey');
-    if (!key) { openKeyDialog(); throw new Error('Lägg först in din gratis API-nyckel.'); }
+    const active = PROVIDERS.filter((p) => store.get(p.store));
+    if (!active.length) { openKeyDialog(); throw new Error('Lägg först in minst en gratis API-nyckel.'); }
     state.abort = new AbortController();
     const signal = state.abort.signal;
-    const makeBody = (model) => JSON.stringify({
+    const makeGeminiBody = (model) => JSON.stringify({
       systemInstruction: { parts: [{ text: system }] },
       contents: messages.map((m) => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] })),
       generationConfig: Object.assign(
@@ -423,49 +448,80 @@
         (model.startsWith('gemini-3') && !noThinking) ? { thinkingConfig: { thinkingLevel: 'low' } } : {}  // snabbare och mindre risk att svaret tar slut
       )
     });
+    const makeChatBody = (p, model) => JSON.stringify(Object.assign({
+      model,
+      messages: [{ role: 'system', content: system }].concat(messages.map((m) => ({ role: m.role, content: m.content }))),
+      max_tokens: maxTokens
+    }, (json && !p.noJsonMode) ? { response_format: { type: 'json_object' } } : {}));
+    const send = (p, key, model) => (p.id === 'gemini'
+      ? fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent', {
+          method: 'POST', signal,
+          headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
+          body: makeGeminiBody(model)
+        })
+      : fetch(p.url, {
+          method: 'POST', signal,
+          headers: { 'content-type': 'application/json', 'authorization': 'Bearer ' + key },
+          body: makeChatBody(p, model)
+        }));
     const wait = (ms) => new Promise((resolve, reject) => {
       const t = setTimeout(resolve, ms);
       signal.addEventListener('abort', () => { clearTimeout(t); reject(new DOMException('Avbruten', 'AbortError')); }, { once: true });
     });
 
-    let overloaded = false, limited = false;
+    let overloaded = false, limited = false, netFail = false, lastErr = '';
+    const authFailed = [];
     for (let round = 0; round < 3; round++) {            // upp till 3 omgångar vid överbelastning
       overloaded = false;
-      for (let i = modelIdx; i < MODELS.length; i++) {   // prova modellerna i tur och ordning
-        let res;
-        try {
-          res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + MODELS[i] + ':generateContent', {
-            method: 'POST', signal,
-            headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
-            body: makeBody(MODELS[i])
-          });
-        } catch (e) {
-          if (e.name === 'AbortError') throw e;
-          throw new Error('Kunde inte nå AI:n. Kontrollera din internetanslutning.');
+      for (const p of active) {                          // prova tjänsterna i tur och ordning
+        if ((cool[p.id] || 0) > Date.now()) { limited = true; continue; }   // nådde nyss gratisgränsen: hoppa över en stund
+        const key = store.get(p.store);
+        let provLimited = false;
+        for (let i = (p.id === 'gemini' ? modelIdx : 0); i < p.models.length; i++) {   // prova tjänstens modeller i tur och ordning
+          const model = p.models[i];
+          let res;
+          try {
+            res = await send(p, key, model);
+          } catch (e) {
+            if (e.name === 'AbortError') throw e;
+            netFail = true; break;                       // nådde inte tjänsten: prova nästa tjänst
+          }
+          if (res.ok) {
+            const data = await res.json();
+            if (p.id === 'gemini') {
+              const cand = data.candidates && data.candidates[0];
+              if (!cand || !cand.content || !cand.content.parts) throw retryErr('AI:n gav inget svar (' + ((cand && cand.finishReason) || (data.promptFeedback && data.promptFeedback.blockReason) || 'okänd orsak') + '). Försök igen.');
+              if (cand.finishReason === 'MAX_TOKENS' && json) throw retryErr('Svaret blev för långt och avbröts. Försök igen, gärna med färre frågor.');
+              return cand.content.parts.map((x) => x.text || '').join('');
+            }
+            const choice = data.choices && data.choices[0];
+            const text = choice && choice.message && choice.message.content;
+            if (choice && choice.finish_reason === 'length' && json) throw retryErr('Svaret blev för långt och avbröts. Försök igen, gärna med färre frågor.');
+            if (!text) { lastErr = p.name + ' gav inget svar.'; continue; }   // tomt svar: prova nästa modell
+            return text;
+          }
+          let detail = '';
+          try { const j = await res.json(); detail = (j.error && j.error.message) || j.message || ''; } catch { /* ignore */ }
+          if (p.id === 'gemini' && res.status === 400 && /thinking/i.test(detail) && !noThinking) { noThinking = true; i--; continue; }  // modellen gillar inte inställningen: försök utan
+          if (res.status === 401 || ([400, 403].includes(res.status) && /api key|permission|credential|unauthor/i.test(detail))) {
+            authFailed.push(p.name); break;              // nyckeln fungerar inte: prova nästa tjänst
+          }
+          if (res.status === 404) { if (p.id === 'gemini' && i === modelIdx) modelIdx = i + 1; continue; }   // modellen finns inte längre
+          if (res.status === 429) { limited = true; provLimited = true; continue; }                          // gränsen nådd: prova nästa modell
+          if ([500, 502, 503, 504].includes(res.status)) { overloaded = true; continue; }                    // överbelastad: prova nästa modell
+          if (res.status === 402) { limited = true; provLimited = true; break; }                              // slut på gratistegodo: nästa tjänst
+          lastErr = 'Något gick fel hos AI:n (' + res.status + '). ' + detail;                                // annat fel: prova nästa modell/tjänst
         }
-        if (res.ok) {
-          const data = await res.json();
-          const cand = data.candidates && data.candidates[0];
-          if (!cand || !cand.content || !cand.content.parts) throw retryErr('AI:n gav inget svar (' + ((cand && cand.finishReason) || (data.promptFeedback && data.promptFeedback.blockReason) || 'okänd orsak') + '). Försök igen.');
-          if (cand.finishReason === 'MAX_TOKENS' && json) throw retryErr('Svaret blev för långt och avbröts. Försök igen, gärna med färre frågor.');
-          return cand.content.parts.map((p) => p.text || '').join('');
-        }
-        let detail = '';
-        try { detail = (await res.json()).error.message; } catch { /* ignore */ }
-        if (res.status === 400 && /thinking/i.test(detail) && !noThinking) { noThinking = true; i--; continue; }  // modellen gillar inte inställningen: försök utan
-        if (res.status === 404) { if (i === modelIdx) modelIdx = i + 1; continue; }     // modellen finns inte längre
-        if (res.status === 429) { limited = true; continue; }                            // gränsen nådd: prova nästa modell
-        if ([500, 502, 503, 504].includes(res.status)) { overloaded = true; continue; } // överbelastad: prova nästa modell
-        if ([400, 401, 403].includes(res.status) && /api key|permission|credential/i.test(detail)) {
-          throw new Error('API-nyckeln fungerar inte. Kontrollera den och försök igen.');
-        }
-        throw new Error('Något gick fel hos AI:n (' + res.status + '). ' + detail);
+        if (provLimited) cool[p.id] = Date.now() + 60000;   // vila tjänsten i en minut
       }
       if (!overloaded) break;
       await wait(3000 * (round + 1));                    // vänta en stund och försök igen
     }
     if (overloaded) throw new Error('AI:n är överbelastad just nu. Det går oftast över snabbt – försök igen om en minut.');
-    if (limited) throw new Error('Du har använt gratisgränsen för tillfället. Vänta en minut (eller till i morgon) och försök igen.');
+    if (limited) throw new Error('Alla dina gratis AI-tjänster har nått sin gräns för tillfället. Vänta en minut (eller till i morgon), eller lägg in en nyckel till för en till tjänst.');
+    if (authFailed.length) throw new Error('API-nyckeln fungerar inte (' + authFailed.join(', ') + '). Kontrollera den och försök igen.');
+    if (netFail) throw new Error('Kunde inte nå AI:n. Kontrollera din internetanslutning.');
+    if (lastErr) throw new Error(lastErr);
     throw new Error('Ingen AI-modell är tillgänglig just nu. Försök igen senare.');
   }
 
@@ -520,7 +576,7 @@
   function validSetup() {
     const s = readSetup();
     if (!s.subject || !s.course || words(s.material) < MIN_WORDS || words(s.material) > MAX_WORDS) return null;
-    if (!store.get('plugga.gkey')) { openKeyDialog(); return null; }
+    if (!hasKey()) { openKeyDialog(); return null; }
     state.s = s;
     return s;
   }
@@ -846,7 +902,18 @@ Svara ENBART med JSON:
   }
 
   /* ---------- API-nyckel-dialog ---------- */
-  function openKeyDialog() { $('#keyInput').value = ''; $('#keyDialog').showModal(); }
+  function openKeyDialog() {
+    const rows = $('#keyRows'); rows.replaceChildren();
+    PROVIDERS.forEach((p) => {
+      const saved = !!store.get(p.store);
+      rows.append(el('div', { class: 'keyRow' },
+        el('label', { for: 'key-' + p.id, text: p.name + (saved ? ' ✓ sparad' : '') }),
+        el('span', { class: 'keyHint' }, 'Gratis nyckel på ', el('a', { href: p.link, target: '_blank', rel: 'noopener', text: p.linkText }), '. ' + p.hint),
+        el('input', { type: 'password', id: 'key-' + p.id, placeholder: saved ? '•••••••• (lämna tomt för att behålla)' : p.ph, autocomplete: 'off', 'aria-label': 'API-nyckel för ' + p.name })
+      ));
+    });
+    $('#keyDialog').showModal();
+  }
 
   /* ---------- Händelser ---------- */
   function goHome() {
@@ -869,11 +936,15 @@ Svara ENBART med JSON:
 
   $('#keyBtn').addEventListener('click', openKeyDialog);
   $('#keyClose').addEventListener('click', () => $('#keyDialog').close());
-  $('#keyRemove').addEventListener('click', () => { store.del('plugga.gkey'); $('#keyDialog').close(); toast('API-nyckeln är borttagen.'); });
+  $('#keyRemove').addEventListener('click', () => { PROVIDERS.forEach((p) => store.del(p.store)); $('#keyDialog').close(); toast('API-nycklarna är borttagna.'); });
   $('#keySave').addEventListener('click', () => {
-    const k = $('#keyInput').value.trim();
-    if (!k) return;
-    store.set('plugga.gkey', k); $('#keyDialog').close(); toast('API-nyckeln är sparad.');
+    let n = 0;
+    PROVIDERS.forEach((p) => {
+      const k = $('#key-' + p.id).value.trim();
+      if (k) { store.set(p.store, k); delete cool[p.id]; n++; }
+    });
+    if (!n) return;
+    $('#keyDialog').close(); toast('API-nycklarna är sparade.');
   });
 
   $('#level').addEventListener('change', () => { fillGrades(); refreshHome(); saveSetup(); });
